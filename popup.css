@@ -1,0 +1,15 @@
+#screenshotBtn,
+#submit {
+    background-color: rgba(169, 192, 213, 0.952);
+    width: 100%;
+    color: white;
+    cursor: pointer; 
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: none;
+}
+
+#screenshotBtn:hover,
+#submit:hover {
+    background-color: rgb(100, 153, 183);
+}

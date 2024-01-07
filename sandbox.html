@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        * {
+            font-size: x-large;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="text"></div>
+    <script type="module">
+        // Dynamically load Tesseract.js library using dynamic import
+        import { createWorker } from './tesseract.js'; 
+
+        // Tesseract.js worker
+        let worker;
+
+        // Function to initialize the worker
+        async function initializeWorker() {
+            worker = createWorker();
+            await worker.load();
+            await worker.loadLanguage('eng');
+            await worker.initialize('eng');
+        }
+
+        // Initialize the worker
+        initializeWorker();
+
+        // Listen for messages from the main script
+        onmessage = async (event) => {
+            const { action, url } = event.data;
+
+            if (action === 'performOCR') {
+                try {
+                    // Ensure the worker is initialized
+                    if (!worker) {
+                        throw new Error('Tesseract worker is not initialized.');
+                    }
+
+                    // Perform OCR on the provided URL
+                    const { data: { text } } = await worker.recognize(url);
+                    postMessage({ action: 'ocrResult', text });
+                } catch (error) {
+                    // Handle errors
+                    console.error('Error during OCR:', error.message);
+                    postMessage({ action: 'ocrError', error: error.message });
+                }
+            }
+        };
+    </script>
+    <script src="webpack/dist/main.js"></script>
+</body>
+
+</html>
+
+
+
+
